@@ -1,4 +1,5 @@
 import { MODULE_ID, SETTINGS, DEFAULT_BASE_URL } from "./const.js";
+import { ConfigDialog } from "./dialog/ConfigDialog.js";
 
 /**
  * Settings lifecycle: `init` for world-scoped values, `ready` for anything
@@ -11,7 +12,7 @@ export function registerSettings() {
     label: "GMANTS_ROLEPLAYR.Settings.ConfigMenu.Label",
     hint: "GMANTS_ROLEPLAYR.Settings.ConfigMenu.Hint",
     icon: "fas fa-link",
-    type: window.gmantsRoleplayr?.ConfigDialog,
+    type: ConfigDialog,
     restricted: true,
   });
 

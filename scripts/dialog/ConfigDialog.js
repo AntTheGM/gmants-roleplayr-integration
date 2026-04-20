@@ -38,7 +38,7 @@ export class ConfigDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   constructor(options = {}) {
     super(options);
-    this.state = {
+    this.formState = {
       apiKey: game.settings.get(MODULE_ID, SETTINGS.API_KEY) ?? "",
       baseUrl: game.settings.get(MODULE_ID, SETTINGS.BASE_URL) || DEFAULT_BASE_URL,
       binding: game.settings.get(MODULE_ID, SETTINGS.BINDING) ?? null,
@@ -49,12 +49,12 @@ export class ConfigDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
   async _prepareContext() {
     return {
-      apiKey: this.state.apiKey,
-      baseUrl: this.state.baseUrl,
-      binding: this.state.binding,
-      testResult: this.state.testResult,
-      isTesting: this.state.isTesting,
-      showBinding: Boolean(this.state.binding),
+      apiKey: this.formState.apiKey,
+      baseUrl: this.formState.baseUrl,
+      binding: this.formState.binding,
+      testResult: this.formState.testResult,
+      isTesting: this.formState.isTesting,
+      showBinding: Boolean(this.formState.binding),
     };
   }
 
@@ -80,58 +80,58 @@ export class ConfigDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const keyInput = this.element.querySelector('[name="apiKey"]');
     const urlInput = this.element.querySelector('[name="baseUrl"]');
     keyInput?.addEventListener("input", (e) => {
-      this.state.apiKey = e.target.value.trim();
-      this.state.testResult = null;
+      this.formState.apiKey = e.target.value.trim();
+      this.formState.testResult = null;
     });
     urlInput?.addEventListener("input", (e) => {
-      this.state.baseUrl = e.target.value.trim();
-      this.state.testResult = null;
+      this.formState.baseUrl = e.target.value.trim();
+      this.formState.testResult = null;
     });
   }
 
   static async #onTest(_event, _target) {
-    this.state.isTesting = true;
-    this.state.testResult = null;
+    this.formState.isTesting = true;
+    this.formState.testResult = null;
     this.render();
 
     // Use a transient client so we don't clobber the saved settings yet.
     const client = new RoleplayrApi();
-    client.apiKey = this.state.apiKey;
-    client.baseUrl = (this.state.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, "");
+    client.apiKey = this.formState.apiKey;
+    client.baseUrl = (this.formState.baseUrl || DEFAULT_BASE_URL).replace(/\/$/, "");
 
     try {
       const me = await client.getMe();
-      this.state.binding = {
+      this.formState.binding = {
         user_id: me.user_id,
         campaign_id: me.campaign_id,
         campaign_name: me.campaign_name,
         world_id: me.world_id,
         world_name: me.world_name,
       };
-      this.state.testResult = {
+      this.formState.testResult = {
         ok: true,
         message: `Connected to "${me.campaign_name}" (${me.world_name}).`,
       };
     } catch (err) {
       logger.warn("Config test failed", err);
-      this.state.testResult = {
+      this.formState.testResult = {
         ok: false,
         message: err.message ?? "Test failed — check your key and base URL.",
       };
     } finally {
-      this.state.isTesting = false;
+      this.formState.isTesting = false;
       this.render();
     }
   }
 
   static async #onSave(_event, _target) {
-    if (!this.state.apiKey) {
+    if (!this.formState.apiKey) {
       ui.notifications.warn("Paste your Roleplayr API key first.");
       return;
     }
-    await game.settings.set(MODULE_ID, SETTINGS.API_KEY, this.state.apiKey);
-    await game.settings.set(MODULE_ID, SETTINGS.BASE_URL, this.state.baseUrl || DEFAULT_BASE_URL);
-    await game.settings.set(MODULE_ID, SETTINGS.BINDING, this.state.binding);
+    await game.settings.set(MODULE_ID, SETTINGS.API_KEY, this.formState.apiKey);
+    await game.settings.set(MODULE_ID, SETTINGS.BASE_URL, this.formState.baseUrl || DEFAULT_BASE_URL);
+    await game.settings.set(MODULE_ID, SETTINGS.BINDING, this.formState.binding);
 
     // Refresh the global client so subsequent hook calls use the new creds.
     game.gmantsRoleplayr?.api?._refresh();

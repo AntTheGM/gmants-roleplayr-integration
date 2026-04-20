@@ -8,12 +8,6 @@ import { CombatSync } from "./sync/CombatSync.js";
 import { logger } from "./util/logger.js";
 
 Hooks.once("init", () => {
-  // Expose the Config dialog class to the settings registration so the
-  // settings menu can instantiate it. Assigned via `window.gmantsRoleplayr`
-  // because `settings.js` runs before ESM imports are all done.
-  window.gmantsRoleplayr = window.gmantsRoleplayr ?? {};
-  window.gmantsRoleplayr.ConfigDialog = ConfigDialog;
-
   registerSettings();
   registerSettingsPromo();
   logger.info("Roleplayr integration initialized.");
