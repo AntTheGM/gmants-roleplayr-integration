@@ -1,0 +1,85 @@
+import { asNumber, primaryImage } from "./common.js";
+
+/**
+ * D&D 5e adapter. Mapping table (Roleplayr element_type_key → dnd5e path):
+ *
+ * | Roleplayr              | Foundry (dnd5e Actor.system)     |
+ * |------------------------|----------------------------------|
+ * | hp_max                 | attributes.hp.max                |
+ * | hp_current             | attributes.hp.value              |
+ * | ac                     | attributes.ac.value              |
+ * | level                  | details.level                    |
+ * | xp                     | details.xp.value                 |
+ * | class                  | details.class                    |
+ * | stats.str / dex / ...  | abilities.{str,dex,...}.value    |
+ *
+ * We only round-trip HP and XP on the sync-back path for v1. Import covers a
+ * wider surface because it's one-shot.
+ */
+export const dnd5eAdapter = {
+  toFoundry(entity) {
+    const elements = new Map(entity.elements.map((e) => [e.element_type_key, e.value]));
+
+    const hpMax = asNumber(elements.get("hp_max")) ?? 10;
+    const hpCurrent = asNumber(elements.get("hp_current")) ?? hpMax;
+    const ac = asNumber(elements.get("ac")) ?? 10;
+    const level = asNumber(elements.get("level")) ?? 1;
+    const xp = asNumber(elements.get("xp")) ?? 0;
+    const className = elements.get("class") ?? "";
+
+    let statsJson = elements.get("stats");
+    if (typeof statsJson === "string") {
+      try {
+        statsJson = JSON.parse(statsJson);
+      } catch {
+        statsJson = null;
+      }
+    }
+    const abilities = {};
+    for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
+      const value = statsJson?.[key];
+      if (typeof value === "number") {
+        abilities[key] = { value };
+      }
+    }
+
+    const documentType = entity.entity_type === "character" ? "Actor" : entity.entity_type === "adversary" ? "Actor" : "Actor";
+
+    return {
+      documentType,
+      data: {
+        name: entity.name || "Unnamed",
+        type: entity.entity_type === "adversary" ? "npc" : "character",
+        img: primaryImage(entity) ?? undefined,
+        system: {
+          attributes: {
+            hp: { value: hpCurrent, max: hpMax },
+            ac: { value: ac },
+          },
+          details: {
+            level,
+            xp: { value: xp },
+            class: className,
+          },
+          abilities,
+        },
+        flags: {
+          "gmants-roleplayr-integration": {
+            roleplayr_id: entity.id,
+            roleplayr_type: entity.entity_type,
+            synced_at: new Date().toISOString(),
+          },
+        },
+      },
+    };
+  },
+
+  fromActor(actor) {
+    const sys = actor.system ?? {};
+    return {
+      hp_current: sys.attributes?.hp?.value ?? null,
+      hp_max: sys.attributes?.hp?.max ?? null,
+      xp: sys.details?.xp?.value ?? null,
+    };
+  },
+};

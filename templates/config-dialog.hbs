@@ -1,0 +1,74 @@
+<div class="gmants-roleplayr-form">
+
+  <section class="gmants-roleplayr-section">
+    <div class="gmants-roleplayr-section-header">
+      <label for="gmants-roleplayr-api-key">{{localize "GMANTS_ROLEPLAYR.Config.ApiKeyLabel"}}</label>
+    </div>
+    <input
+      id="gmants-roleplayr-api-key"
+      name="apiKey"
+      type="password"
+      autocomplete="off"
+      spellcheck="false"
+      placeholder="rp_live_..."
+      value="{{apiKey}}"
+    />
+    <p class="gmants-roleplayr-hint">
+      {{localize "GMANTS_ROLEPLAYR.Config.ApiKeyHint"}}
+    </p>
+  </section>
+
+  <section class="gmants-roleplayr-section">
+    <div class="gmants-roleplayr-section-header">
+      <label for="gmants-roleplayr-base-url">{{localize "GMANTS_ROLEPLAYR.Config.BaseUrlLabel"}}</label>
+    </div>
+    <input
+      id="gmants-roleplayr-base-url"
+      name="baseUrl"
+      type="url"
+      autocomplete="off"
+      spellcheck="false"
+      value="{{baseUrl}}"
+    />
+    <p class="gmants-roleplayr-hint">
+      {{localize "GMANTS_ROLEPLAYR.Config.BaseUrlHint"}}
+    </p>
+  </section>
+
+  {{#if showBinding}}
+    <section class="gmants-roleplayr-section gmants-roleplayr-binding">
+      <div class="gmants-roleplayr-section-header">
+        <strong>{{localize "GMANTS_ROLEPLAYR.Config.BindingLabel"}}</strong>
+      </div>
+      <div>
+        <div><strong>{{binding.campaign_name}}</strong></div>
+        <div class="gmants-roleplayr-muted">{{binding.world_name}}</div>
+      </div>
+    </section>
+  {{/if}}
+
+  {{#if testResult}}
+    <section class="gmants-roleplayr-section gmants-roleplayr-test-result gmants-roleplayr-test-{{#if testResult.ok}}ok{{else}}err{{/if}}">
+      <span>{{testResult.message}}</span>
+    </section>
+  {{/if}}
+
+  <footer class="gmants-roleplayr-footer">
+    <button type="button" data-action="test" {{#if isTesting}}disabled{{/if}}>
+      {{#if isTesting}}
+        <i class="fas fa-spinner fa-spin"></i>
+        {{localize "GMANTS_ROLEPLAYR.Config.Testing"}}
+      {{else}}
+        <i class="fas fa-plug"></i>
+        {{localize "GMANTS_ROLEPLAYR.Config.TestConnection"}}
+      {{/if}}
+    </button>
+    <div class="gmants-roleplayr-footer-right">
+      <button type="button" data-action="cancel">{{localize "GMANTS_ROLEPLAYR.Config.Cancel"}}</button>
+      <button type="button" data-action="save" class="gmants-roleplayr-primary-btn">
+        {{localize "GMANTS_ROLEPLAYR.Config.Save"}}
+      </button>
+    </div>
+  </footer>
+
+</div>

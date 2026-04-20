@@ -1,0 +1,32 @@
+{
+  "id": "gmants-roleplayr-integration",
+  "title": "Roleplayr Integration",
+  "description": "Bridge Foundry VTT with your Roleplayr campaign: import entities, sync runtime state (HP, XP, inventory) back to Roleplayr, and stream live combat state to the Player Portal.",
+  "version": "1.0.0",
+  "compatibility": {
+    "minimum": "13",
+    "verified": "13.351"
+  },
+  "authors": [
+    {
+      "name": "GM Ant",
+      "url": "https://roleplayr.com/gmant"
+    }
+  ],
+  "url": "https://github.com/AntTheGM/gmants-roleplayr-integration",
+  "bugs": "https://github.com/AntTheGM/gmants-roleplayr-integration/issues",
+  "license": "LICENSE",
+  "readme": "README.md",
+  "changelog": "https://github.com/AntTheGM/gmants-roleplayr-integration/releases",
+  "manifest": "https://github.com/AntTheGM/gmants-roleplayr-integration/releases/latest/download/module.json",
+  "download": "https://github.com/AntTheGM/gmants-roleplayr-integration/releases/download/v1.0.0/module.zip",
+  "esmodules": ["scripts/main.js"],
+  "styles": ["styles/gmants-roleplayr.css"],
+  "languages": [
+    {
+      "lang": "en",
+      "name": "English",
+      "path": "lang/en.json"
+    }
+  ]
+}

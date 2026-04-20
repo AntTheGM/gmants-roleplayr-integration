@@ -1,0 +1,70 @@
+<div class="gmants-roleplayr-form gmants-roleplayr-import-form">
+
+  <div class="gmants-roleplayr-type-bar">
+    {{#each types}}
+      <button
+        type="button"
+        class="gmants-roleplayr-type-btn {{#if active}}active{{/if}}"
+        data-action="selectType"
+        data-type="{{key}}"
+      >
+        {{label}}
+      </button>
+    {{/each}}
+    <button
+      type="button"
+      class="gmants-roleplayr-refresh-btn"
+      data-action="refresh"
+      title="{{localize "GMANTS_ROLEPLAYR.Import.Refresh"}}"
+    >
+      <i class="fas fa-sync"></i>
+    </button>
+  </div>
+
+  {{#if loadError}}
+    <section class="gmants-roleplayr-test-err">
+      <span>{{loadError}}</span>
+    </section>
+  {{else if isLoading}}
+    <section class="gmants-roleplayr-empty">
+      <i class="fas fa-spinner fa-spin"></i>
+      {{localize "GMANTS_ROLEPLAYR.Import.Loading"}}
+    </section>
+  {{else if isEmpty}}
+    <section class="gmants-roleplayr-empty">
+      {{localize "GMANTS_ROLEPLAYR.Import.Empty"}}
+    </section>
+  {{else}}
+    <ul class="gmants-roleplayr-entity-list">
+      {{#each entities}}
+        <li class="gmants-roleplayr-entity-row">
+          <div class="gmants-roleplayr-entity-meta">
+            <div class="gmants-roleplayr-entity-name">{{name}}</div>
+            <div class="gmants-roleplayr-entity-sub">{{entity_type}}</div>
+          </div>
+          <button
+            type="button"
+            class="gmants-roleplayr-primary-btn"
+            data-action="importEntity"
+            data-entity-id="{{id}}"
+          >
+            <i class="fas fa-cloud-download-alt"></i>
+            {{localize "GMANTS_ROLEPLAYR.Import.ImportButton"}}
+          </button>
+        </li>
+      {{/each}}
+    </ul>
+    {{#if hasMore}}
+      <p class="gmants-roleplayr-hint">
+        {{localize "GMANTS_ROLEPLAYR.Import.MoreAvailable"}}
+      </p>
+    {{/if}}
+  {{/if}}
+
+  <footer class="gmants-roleplayr-footer">
+    <div class="gmants-roleplayr-footer-right">
+      <button type="button" data-action="close">{{localize "GMANTS_ROLEPLAYR.Import.Close"}}</button>
+    </div>
+  </footer>
+
+</div>

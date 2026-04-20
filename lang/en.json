@@ -1,0 +1,48 @@
+{
+  "GMANTS_ROLEPLAYR": {
+    "Settings": {
+      "ConfigMenu": {
+        "Name": "Roleplayr Connection",
+        "Label": "Configure Roleplayr",
+        "Hint": "Paste your Roleplayr API key and test the connection."
+      },
+      "ApiKey": {
+        "Name": "API Key",
+        "Hint": "Campaign-scoped Bearer token from Roleplayr campaign settings."
+      },
+      "BaseUrl": {
+        "Name": "API Base URL",
+        "Hint": "Defaults to https://www.roleplayr.net — change only for local development."
+      },
+      "ActorSync": {
+        "Name": "Sync Actor Changes to Roleplayr",
+        "Hint": "When on, HP/XP changes on imported actors are written back to Roleplayr (debounced 2s)."
+      },
+      "CombatSync": {
+        "Name": "Stream Combat State to Player Portal",
+        "Hint": "When on, combat tracker, party HP, and current scene are pushed live to the Roleplayr Player Portal."
+      }
+    },
+    "Config": {
+      "Title": "Roleplayr Integration",
+      "ApiKeyLabel": "API Key",
+      "ApiKeyHint": "Generate from your Roleplayr campaign \u2192 Settings \u2192 Foundry VTT Integration. Keys start with rp_live_.",
+      "BaseUrlLabel": "Base URL",
+      "BaseUrlHint": "Leave as is for production. Only change for local Roleplayr development.",
+      "BindingLabel": "Currently bound to:",
+      "Testing": "Testing...",
+      "TestConnection": "Test connection",
+      "Save": "Save",
+      "Cancel": "Cancel"
+    },
+    "Import": {
+      "Title": "Import from Roleplayr",
+      "Loading": "Loading entities...",
+      "Empty": "No entities of this type in the bound campaign.",
+      "Refresh": "Refresh",
+      "ImportButton": "Import",
+      "MoreAvailable": "Showing the first 100. Add a search filter in a future update.",
+      "Close": "Close"
+    }
+  }
+}

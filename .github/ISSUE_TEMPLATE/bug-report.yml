@@ -1,0 +1,79 @@
+name: Bug Report
+description: Report a bug or unexpected behavior
+labels: ["bug"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for taking the time to report a bug! Please fill out the details below.
+
+  - type: input
+    id: foundry-version
+    attributes:
+      label: Foundry VTT Version
+      placeholder: "e.g., 13.351"
+    validations:
+      required: true
+
+  - type: input
+    id: system-version
+    attributes:
+      label: Game System & Version
+      placeholder: "e.g., PF2e 7.9.1 or D&D 5e 4.1.2"
+    validations:
+      required: true
+
+  - type: input
+    id: module-version
+    attributes:
+      label: Module Version
+      placeholder: "e.g., 1.0.0"
+    validations:
+      required: true
+
+  - type: dropdown
+    id: feature-area
+    attributes:
+      label: Affected Feature
+      options:
+        - Config / API key setup
+        - Import from Roleplayr
+        - Actor sync-back (HP / XP)
+        - Combat state streaming
+        - Other / not sure
+    validations:
+      required: true
+
+  - type: textarea
+    id: description
+    attributes:
+      label: What happened?
+      description: Describe the bug clearly. What did you expect to happen vs. what actually happened?
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: How can we recreate this bug?
+      value: |
+        1.
+        2.
+        3.
+    validations:
+      required: true
+
+  - type: textarea
+    id: other-modules
+    attributes:
+      label: Other Active Modules
+      description: List any other modules you had active (helps identify conflicts)
+      placeholder: "e.g., lib-wrapper, pf2e-hud, socketlib"
+
+  - type: textarea
+    id: console-errors
+    attributes:
+      label: Console Errors
+      description: "Open the browser console (F12 > Console tab) and paste any red errors here. Redact any API keys before submitting."
+      render: shell

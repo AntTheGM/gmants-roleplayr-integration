@@ -1,0 +1,251 @@
+/* Roleplayr Integration — VTTools style */
+
+.gmants-roleplayr {
+  --gmants-roleplayr-brand: #a44;
+  --gmants-roleplayr-gold: #b8860b;
+  --gmants-roleplayr-gold-light: #daa520;
+  --gmants-roleplayr-success: #4a4;
+  --gmants-roleplayr-purple: #8a7ec0;
+  --gmants-roleplayr-purple-bg: rgba(90, 78, 140, 0.08);
+  --gmants-roleplayr-purple-border: rgba(90, 78, 140, 0.15);
+  --gmants-roleplayr-warning: #c5a028;
+
+  --gmants-roleplayr-border: rgba(128, 128, 128, 0.2);
+  --gmants-roleplayr-border-light: rgba(128, 128, 128, 0.15);
+
+  --gmants-roleplayr-bg-inset: rgba(0, 0, 0, 0.05);
+  --gmants-roleplayr-bg-subtle: rgba(0, 0, 0, 0.03);
+  --gmants-roleplayr-bg-hover: rgba(0, 0, 0, 0.06);
+  --gmants-roleplayr-bg-selected: rgba(0, 0, 0, 0.04);
+}
+
+/* --- Branding ---------------------------------------------------------- */
+
+a.gmants-roleplayr-branding {
+  margin-left: auto;
+  font-style: italic;
+  color: var(--gmants-roleplayr-brand);
+  font-size: 0.75rem;
+  text-decoration: none;
+}
+
+a.gmants-roleplayr-branding:hover {
+  text-decoration: underline;
+  color: var(--gmants-roleplayr-gold-light);
+}
+
+/* --- Form layout ------------------------------------------------------- */
+
+.gmants-roleplayr-form {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0.5rem 0.25rem;
+  font-size: 0.85rem;
+}
+
+.gmants-roleplayr-section {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gmants-roleplayr-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: bold;
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  opacity: 0.7;
+}
+
+.gmants-roleplayr-hint {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  margin: 0;
+}
+
+.gmants-roleplayr-muted {
+  font-size: 0.75rem;
+  opacity: 0.6;
+}
+
+.gmants-roleplayr-empty {
+  text-align: center;
+  opacity: 0.5;
+  font-style: italic;
+  padding: 2rem 0;
+}
+
+/* --- Binding readout --------------------------------------------------- */
+
+.gmants-roleplayr-binding {
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 4px;
+  background: var(--gmants-roleplayr-bg-subtle);
+  padding: 0.5rem;
+}
+
+/* --- Test result banner ----------------------------------------------- */
+
+.gmants-roleplayr-test-result {
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  border: 1px solid var(--gmants-roleplayr-border);
+}
+
+.gmants-roleplayr-test-ok {
+  background: rgba(74, 170, 74, 0.1);
+  border-color: rgba(74, 170, 74, 0.3);
+  color: var(--gmants-roleplayr-success);
+}
+
+.gmants-roleplayr-test-err {
+  padding: 0.5rem 0.75rem;
+  border-radius: 4px;
+  border: 1px solid rgba(170, 68, 68, 0.3);
+  background: rgba(170, 68, 68, 0.1);
+  color: var(--gmants-roleplayr-brand);
+}
+
+/* --- Footer buttons ---------------------------------------------------- */
+
+.gmants-roleplayr-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.5rem;
+  padding-top: 0.5rem;
+  border-top: 1px solid var(--gmants-roleplayr-border-light);
+}
+
+.gmants-roleplayr-footer-right {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.gmants-roleplayr-footer button {
+  font-weight: bold;
+  padding: 0.5rem 0.75rem;
+}
+
+.gmants-roleplayr-footer button:disabled {
+  opacity: 0.35;
+  border-style: dashed;
+}
+
+.gmants-roleplayr .gmants-roleplayr-primary-btn {
+  background: linear-gradient(135deg, var(--gmants-roleplayr-gold), var(--gmants-roleplayr-gold-light));
+  color: #fff;
+  border: 1px solid var(--gmants-roleplayr-gold);
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.3);
+}
+
+.gmants-roleplayr .gmants-roleplayr-primary-btn:hover:not(:disabled) {
+  box-shadow: 0 0 8px rgba(218, 165, 32, 0.4);
+}
+
+.gmants-roleplayr .gmants-roleplayr-primary-btn:active:not(:disabled) {
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.3);
+}
+
+/* --- Import dialog ----------------------------------------------------- */
+
+.gmants-roleplayr-type-bar {
+  display: flex;
+  gap: 0.25rem;
+  flex-wrap: wrap;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background: var(--gmants-roleplayr-bg-subtle);
+  border: 1px solid var(--gmants-roleplayr-border-light);
+}
+
+.gmants-roleplayr-type-btn {
+  font-size: 0.8rem;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.gmants-roleplayr-type-btn.active {
+  background: var(--gmants-roleplayr-bg-selected);
+  font-weight: bold;
+  border-color: var(--gmants-roleplayr-gold);
+}
+
+.gmants-roleplayr-refresh-btn {
+  margin-left: auto;
+  padding: 0.25rem 0.5rem;
+  background: transparent;
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  cursor: pointer;
+  font-size: 0.8rem;
+}
+
+.gmants-roleplayr-entity-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.gmants-roleplayr-entity-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem;
+  border: 1px solid var(--gmants-roleplayr-border-light);
+  border-radius: 3px;
+  background: var(--gmants-roleplayr-bg-subtle);
+}
+
+.gmants-roleplayr-entity-row:hover {
+  background: var(--gmants-roleplayr-bg-hover);
+}
+
+.gmants-roleplayr-entity-meta {
+  min-width: 0;
+  flex: 1;
+}
+
+.gmants-roleplayr-entity-name {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.gmants-roleplayr-entity-sub {
+  font-size: 0.75rem;
+  opacity: 0.6;
+  text-transform: lowercase;
+}
+
+/* Sidebar launcher button */
+
+.gmants-roleplayr-integration-import-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  font-weight: bold;
+  background: var(--gmants-roleplayr-bg-subtle);
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.gmants-roleplayr-integration-import-btn:hover {
+  background: var(--gmants-roleplayr-bg-hover);
+}

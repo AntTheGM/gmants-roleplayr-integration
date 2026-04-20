@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Roleplayr support
+    url: https://www.roleplayr.net
+    about: For questions about the Roleplayr service itself (API keys, campaign settings, Player Portal).
+  - name: Foundry VTT Discord
+    url: https://discord.gg/foundryvtt
+    about: For general Foundry questions not specific to this module.
