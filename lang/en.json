@@ -41,6 +41,9 @@
       "Empty": "No entities of this type in the bound campaign.",
       "Refresh": "Refresh",
       "ImportButton": "Import",
+      "ImportAs": "As:",
+      "AsCharacter": "Player Character",
+      "AsNPC": "NPC",
       "MoreAvailable": "Showing the first 100. Add a search filter in a future update.",
       "Close": "Close"
     }

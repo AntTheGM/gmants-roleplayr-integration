@@ -15,8 +15,9 @@ import { asNumber, primaryImage } from "./common.js";
  * | stats.str / ...        | abilities.{str,dex,...}.mod       |
  */
 export const pf2eAdapter = {
-  toFoundry(entity) {
+  toFoundry(entity, { targetType } = {}) {
     const elements = new Map(entity.elements.map((e) => [e.element_type_key, e.value]));
+    const actorType = targetType ?? (entity.entity_type === "adversary" ? "npc" : "character");
 
     const hpMax = asNumber(elements.get("hp_max")) ?? 8;
     const hpCurrent = asNumber(elements.get("hp_current")) ?? hpMax;
@@ -45,7 +46,7 @@ export const pf2eAdapter = {
       documentType: "Actor",
       data: {
         name: entity.name || "Unnamed",
-        type: entity.entity_type === "adversary" ? "npc" : "character",
+        type: actorType,
         img: primaryImage(entity) ?? undefined,
         system: {
           attributes: {

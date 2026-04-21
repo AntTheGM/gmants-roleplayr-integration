@@ -53,7 +53,15 @@ export class ImportDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         { key: "location", label: "Locations" },
         { key: "event", label: "Events" },
       ].map((t) => ({ ...t, active: t.key === this.selectedType })),
-      entities: this.entities,
+      entities: this.entities.map((e) => {
+        const defaultTargetType = e.entity_type === "adversary" ? "npc" : "character";
+        return {
+          ...e,
+          defaultTargetType,
+          isDefaultCharacter: defaultTargetType === "character",
+          isDefaultNpc: defaultTargetType === "npc",
+        };
+      }),
       isLoading: this.isLoading,
       hasMore: this.hasMore,
       loadError: this.loadError,
@@ -125,13 +133,22 @@ export class ImportDialog extends HandlebarsApplicationMixin(ApplicationV2) {
     const api = game.gmantsRoleplayr?.api;
     if (!api?.isConfigured) return;
 
+    // Read the row's target-type select (if present) so the GM can override
+    // the default adversary→npc / character→character mapping per entity.
+    const row = target.closest(".gmants-roleplayr-entity-row");
+    const targetType = row?.querySelector('[name="targetType"]')?.value || undefined;
+
     try {
       const entity = await api.getEntity(entityId);
-      const spec = currentAdapter().toFoundry(entity);
+      const spec = currentAdapter().toFoundry(entity, { targetType });
       const documentClass = CONFIG[spec.documentType]?.documentClass ?? Actor;
       const created = await documentClass.create(spec.data);
       ui.notifications.info(`Imported "${entity.name}" to ${spec.documentType}.`);
-      logger.info("Imported entity", { roleplayr_id: entity.id, foundry_id: created?.id });
+      logger.info("Imported entity", {
+        roleplayr_id: entity.id,
+        foundry_id: created?.id,
+        target_type: targetType,
+      });
     } catch (err) {
       logger.error("Import failed", err);
       ui.notifications.error(`Import failed: ${err.message ?? err}`);

@@ -17,8 +17,9 @@ import { asNumber, primaryImage } from "./common.js";
  * wider surface because it's one-shot.
  */
 export const dnd5eAdapter = {
-  toFoundry(entity) {
+  toFoundry(entity, { targetType } = {}) {
     const elements = new Map(entity.elements.map((e) => [e.element_type_key, e.value]));
+    const actorType = targetType ?? (entity.entity_type === "adversary" ? "npc" : "character");
 
     const hpMax = asNumber(elements.get("hp_max")) ?? 10;
     const hpCurrent = asNumber(elements.get("hp_current")) ?? hpMax;
@@ -43,13 +44,11 @@ export const dnd5eAdapter = {
       }
     }
 
-    const documentType = entity.entity_type === "character" ? "Actor" : entity.entity_type === "adversary" ? "Actor" : "Actor";
-
     return {
-      documentType,
+      documentType: "Actor",
       data: {
         name: entity.name || "Unnamed",
-        type: entity.entity_type === "adversary" ? "npc" : "character",
+        type: actorType,
         img: primaryImage(entity) ?? undefined,
         system: {
           attributes: {

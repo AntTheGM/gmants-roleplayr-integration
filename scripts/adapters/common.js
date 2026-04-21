@@ -28,8 +28,13 @@
  * @property {number=} hp_max
  * @property {number=} xp
  *
+ * @typedef {object} ToFoundryOptions
+ * @property {"character" | "npc"=} targetType — override actor sheet type
+ *   regardless of the Roleplayr entity_type. Defaults to adversary→npc,
+ *   everything else→character.
+ *
  * @typedef {object} SystemAdapter
- * @property {(entity: RoleplayrEntity) => FoundryImportSpec} toFoundry
+ * @property {(entity: RoleplayrEntity, options?: ToFoundryOptions) => FoundryImportSpec} toFoundry
  * @property {(actor: Actor) => SyncableFields} fromActor
  */
 

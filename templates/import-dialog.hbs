@@ -42,6 +42,17 @@
             <div class="gmants-roleplayr-entity-name">{{name}}</div>
             <div class="gmants-roleplayr-entity-sub">{{entity_type}}</div>
           </div>
+          <label class="gmants-roleplayr-target-type">
+            <span class="gmants-roleplayr-target-type-label">{{localize "GMANTS_ROLEPLAYR.Import.ImportAs"}}</span>
+            <select name="targetType">
+              <option value="character" {{#if isDefaultCharacter}}selected{{/if}}>
+                {{localize "GMANTS_ROLEPLAYR.Import.AsCharacter"}}
+              </option>
+              <option value="npc" {{#if isDefaultNpc}}selected{{/if}}>
+                {{localize "GMANTS_ROLEPLAYR.Import.AsNPC"}}
+              </option>
+            </select>
+          </label>
           <button
             type="button"
             class="gmants-roleplayr-primary-btn"

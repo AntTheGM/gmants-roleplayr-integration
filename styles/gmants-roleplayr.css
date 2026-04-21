@@ -232,6 +232,31 @@ a.gmants-roleplayr-branding:hover {
   text-transform: lowercase;
 }
 
+.gmants-roleplayr-target-type {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  font-size: 0.7rem;
+  opacity: 0.85;
+  margin-right: 0.5rem;
+}
+
+.gmants-roleplayr-target-type-label {
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.6;
+  font-size: 0.65rem;
+}
+
+.gmants-roleplayr-target-type select {
+  font-size: 0.75rem;
+  padding: 0.15rem 0.25rem;
+  background: var(--gmants-roleplayr-bg-inset);
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  min-width: 7rem;
+}
+
 /* Sidebar launcher button */
 
 .gmants-roleplayr-integration-import-btn {
