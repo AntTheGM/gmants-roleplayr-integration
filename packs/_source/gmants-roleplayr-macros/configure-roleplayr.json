@@ -1,0 +1,26 @@
+{
+  "_id": "rlplyrCfgMacro01",
+  "_key": "!macros!rlplyrCfgMacro01",
+  "name": "Configure Roleplayr",
+  "type": "script",
+  "author": "SYixMRBTMbFoSMVo",
+  "scope": "global",
+  "img": "icons/tools/scribal/ink-quill-red.webp",
+  "folder": null,
+  "sort": 100,
+  "command": "const mod = game.modules.get('gmants-roleplayr-integration');\nif (!mod?.active) {\n  ui.notifications.error(\"GMAnt's Roleplayr Integration module is not active.\");\n} else {\n  game.gmantsRoleplayr?.openConfig?.();\n}",
+  "ownership": {
+    "default": 0
+  },
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.351",
+    "systemId": null,
+    "systemVersion": null,
+    "createdTime": 1743465600000,
+    "modifiedTime": 1743465600000,
+    "lastModifiedBy": "SYixMRBTMbFoSMVo"
+  }
+}

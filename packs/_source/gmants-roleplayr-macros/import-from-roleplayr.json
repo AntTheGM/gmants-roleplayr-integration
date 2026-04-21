@@ -1,0 +1,26 @@
+{
+  "_id": "rlplyrImpMacro01",
+  "_key": "!macros!rlplyrImpMacro01",
+  "name": "Import from Roleplayr",
+  "type": "script",
+  "author": "SYixMRBTMbFoSMVo",
+  "scope": "global",
+  "img": "icons/magic/movement/portal-vortex-orange.webp",
+  "folder": null,
+  "sort": 200,
+  "command": "const mod = game.modules.get('gmants-roleplayr-integration');\nif (!mod?.active) {\n  ui.notifications.error(\"GMAnt's Roleplayr Integration module is not active.\");\n} else {\n  game.gmantsRoleplayr?.openImport?.();\n}",
+  "ownership": {
+    "default": 0
+  },
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.351",
+    "systemId": null,
+    "systemVersion": null,
+    "createdTime": 1743465600000,
+    "modifiedTime": 1743465600000,
+    "lastModifiedBy": "SYixMRBTMbFoSMVo"
+  }
+}

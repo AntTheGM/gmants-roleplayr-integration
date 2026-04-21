@@ -35,4 +35,22 @@ for item in module.json scripts styles templates lang assets images LICENSE READ
   fi
 done
 
+# Packs — copy compiled LevelDB data only, skip _source/.
+# Never run this while a world is running — Foundry holds exclusive LevelDB
+# locks and mixing old/new files corrupts the pack.
+if [ -d "${SRC}/packs" ]; then
+  for pack in gmants-roleplayr-macros; do
+    pack_src="${SRC}/packs/${pack}"
+    pack_dest="${DEST}/packs/${pack}"
+    if [ -d "${pack_src}" ]; then
+      rm -rf "${pack_dest}"
+      mkdir -p "${pack_dest}"
+      find "${pack_src}" -maxdepth 1 -type f \
+        \( -name "*.ldb" -o -name "CURRENT" -o -name "MANIFEST-*" -o -name "*.log" -o -name "LOG" -o -name "LOG.old" -o -name "LOCK" \) \
+        -exec cp {} "${pack_dest}/" \;
+      echo "  ✓ packs/${pack}"
+    fi
+  done
+fi
+
 echo "Done. Reload your Foundry world (F5) or Return to Setup + relaunch to pick up ESM changes."

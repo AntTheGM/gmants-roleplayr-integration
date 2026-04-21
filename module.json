@@ -1,6 +1,6 @@
 {
   "id": "gmants-roleplayr-integration",
-  "title": "Roleplayr Integration",
+  "title": "GMAnt's Roleplayr Integration",
   "description": "Bridge Foundry VTT with your Roleplayr campaign: import entities, sync runtime state (HP, XP, inventory) back to Roleplayr, and stream live combat state to the Player Portal.",
   "version": "1.0.0",
   "compatibility": {
@@ -28,5 +28,27 @@
       "name": "English",
       "path": "lang/en.json"
     }
-  ]
+  ],
+  "packs": [
+    {
+      "name": "gmants-roleplayr-macros",
+      "label": "Roleplayr Integration Macros",
+      "path": "packs/gmants-roleplayr-macros",
+      "type": "Macro",
+      "ownership": {
+        "PLAYER": "OBSERVER",
+        "ASSISTANT": "OWNER"
+      }
+    }
+  ],
+  "packFolders": [
+    {
+      "name": "GMAnt's Roleplayr Integration",
+      "sorting": "m",
+      "packs": ["gmants-roleplayr-macros"]
+    }
+  ],
+  "flags": {
+    "hotReload": true
+  }
 }

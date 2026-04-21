@@ -1,0 +1,26 @@
+{
+  "_id": "rlplyrStsMacro01",
+  "_key": "!macros!rlplyrStsMacro01",
+  "name": "Roleplayr Sync Status",
+  "type": "script",
+  "author": "SYixMRBTMbFoSMVo",
+  "scope": "global",
+  "img": "icons/tools/navigation/compass-brass-blue-red.webp",
+  "folder": null,
+  "sort": 300,
+  "command": "const mod = game.modules.get('gmants-roleplayr-integration');\nif (!mod?.active) {\n  ui.notifications.error(\"GMAnt's Roleplayr Integration module is not active.\");\n  return;\n}\nconst api = game.gmantsRoleplayr?.api;\nif (!api?.isConfigured) {\n  ui.notifications.warn(\"Roleplayr is not configured. Run 'Configure Roleplayr' first.\");\n  return;\n}\ntry {\n  const me = await api.getMe();\n  const lines = [\n    `<strong>Roleplayr Sync Status</strong>`,\n    `Campaign: ${me.campaign_name ?? me.campaign_id ?? '(unbound)'}`,\n    `World: ${me.world_name ?? me.world_id ?? '(unbound)'}`,\n    `User: ${me.user_id ?? '(unknown)'}`,\n  ];\n  ChatMessage.create({\n    content: `<div>${lines.join('<br/>')}</div>`,\n    whisper: [game.user.id],\n  });\n} catch (err) {\n  ui.notifications.error(`Roleplayr check failed: ${err.message}`);\n  console.error('[gmants-roleplayr-integration]', err);\n}",
+  "ownership": {
+    "default": 0
+  },
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.351",
+    "systemId": null,
+    "systemVersion": null,
+    "createdTime": 1743465600000,
+    "modifiedTime": 1743465600000,
+    "lastModifiedBy": "SYixMRBTMbFoSMVo"
+  }
+}
