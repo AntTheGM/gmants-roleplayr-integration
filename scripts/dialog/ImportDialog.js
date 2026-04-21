@@ -92,7 +92,7 @@ export class ImportDialog extends HandlebarsApplicationMixin(ApplicationV2) {
   async #loadEntities() {
     const api = game.gmantsRoleplayr?.api;
     if (!api?.isConfigured) {
-      this.loadError = "Configure your Roleplayr API key first (Module Settings → Roleplayr Integration).";
+      this.loadError = "Configure your Roleplayr API key first (Module Settings → GMAnt's Roleplayr Integration).";
       this.render();
       return;
     }

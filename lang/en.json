@@ -24,7 +24,7 @@
       }
     },
     "Config": {
-      "Title": "Roleplayr Integration",
+      "Title": "GMAnt's Roleplayr Integration",
       "ApiKeyLabel": "API Key",
       "ApiKeyHint": "Generate from your Roleplayr campaign \u2192 Settings \u2192 Foundry VTT Integration. Keys start with rp_live_.",
       "BaseUrlLabel": "Base URL",

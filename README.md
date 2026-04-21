@@ -1,4 +1,4 @@
-# Roleplayr Integration
+# GMAnt's Roleplayr Integration
 
 ![License](https://img.shields.io/github/license/AntTheGM/gmants-roleplayr-integration)
 ![Foundry](https://img.shields.io/badge/Foundry-v13-informational)
@@ -25,7 +25,7 @@ Paste an API key from your Roleplayr campaign settings, and this module:
 ## Setup
 
 1. In **Roleplayr**, open your campaign settings and generate an API key under **Foundry VTT Integration**. Copy the key (it's shown once).
-2. In Foundry, open **Game Settings → Configure Settings → Module Settings → Roleplayr Integration → Configure Roleplayr**.
+2. In Foundry, open **Game Settings → Configure Settings → Module Settings → GMAnt's Roleplayr Integration → Configure Roleplayr**.
 3. Paste the API key, click **Test connection**, and save.
 4. (Optional) In the Roleplayr campaign settings, toggle **Live Foundry state → Player Portal** on to enable live combat streaming.
 
@@ -53,7 +53,7 @@ Pushes are rate-limited client-side to 1/sec to match the server's enforcement.
 
 ## Configuration
 
-Under **Module Settings → Roleplayr Integration**:
+Under **Module Settings → GMAnt's Roleplayr Integration**:
 
 | Setting | Default | What it does |
 |---|---|---|
