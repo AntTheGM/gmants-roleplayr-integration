@@ -59,6 +59,20 @@ export function elementValue(entity, key) {
 }
 
 /**
+ * Try a list of candidate element_type_keys and return the first non-empty value.
+ * Roleplayr has mixed conventions — some fields are stored under numeric-suffixed
+ * keys (`dnd5e-strength_401010`), others under bare keys (`pathfinder2e-strength`,
+ * `class`). Callers pass the full priority list.
+ */
+export function firstElementValue(entity, keys) {
+  for (const key of keys) {
+    const value = elementValue(entity, key);
+    if (value !== null && value !== undefined && value !== "") return value;
+  }
+  return null;
+}
+
+/**
  * Shared JournalEntry builder for locations and events. System-agnostic —
  * JournalEntry is a base Foundry document, not system-specific, so both
  * dnd5e and pf2e delegate here.

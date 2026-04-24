@@ -1,9 +1,23 @@
 import {
   asNumber,
   elementValue,
+  firstElementValue,
   primaryImage,
   toFoundryJournalDefault,
 } from "./common.js";
+
+// PF2e uses bare prefixed keys (no numeric suffix). Aliases kept for older
+// data. Priority-ordered — first non-empty wins.
+const PF2E_ABILITY_KEYS = {
+  str: ["pathfinder2e-strength", "strength", "str"],
+  dex: ["pathfinder2e-dexterity", "dexterity", "dex"],
+  con: ["pathfinder2e-constitution", "constitution", "con"],
+  int: ["pathfinder2e-intelligence", "intelligence", "int"],
+  wis: ["pathfinder2e-wisdom", "wisdom", "wis"],
+  cha: ["pathfinder2e-charisma", "charisma", "cha"],
+};
+const PF2E_CLASS_KEYS = ["pathfinder2e-class", "class"];
+const PF2E_ANCESTRY_KEYS = ["pathfinder2e-ancestry", "ancestry", "race", "species"];
 
 const MODULE_ID = "gmants-roleplayr-integration";
 
@@ -32,7 +46,8 @@ export const pf2eAdapter = {
     const level = asNumber(elements.get("level")) ?? 1;
     const xp = asNumber(elements.get("xp")) ?? 0;
     const speed = asNumber(elements.get("speed")) ?? 25;
-    const className = elements.get("class") ?? "";
+    const className = firstElementValue(entity, PF2E_CLASS_KEYS) ?? "";
+    const ancestry = firstElementValue(entity, PF2E_ANCESTRY_KEYS) ?? "";
 
     let statsJson = elements.get("stats");
     if (typeof statsJson === "string") {
@@ -42,11 +57,13 @@ export const pf2eAdapter = {
         statsJson = null;
       }
     }
-    // Roleplayr sends PF2e ability scores (10 = 0 mod, 12 = +1 mod).
+    // Roleplayr stores PF2e ability scores (10 = 0 mod, 12 = +1 mod).
     // PF2e Foundry stores the modifier, not the score.
     const abilities = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
-      const score = asNumber(statsJson?.[key]) ?? 14;
+      const fromElement = asNumber(firstElementValue(entity, PF2E_ABILITY_KEYS[key]));
+      const fromStats = asNumber(statsJson?.[key]);
+      const score = fromElement ?? fromStats ?? 14;
       abilities[key] = { mod: Math.floor((score - 10) / 2) };
     }
 
@@ -66,6 +83,7 @@ export const pf2eAdapter = {
             level: { value: level },
             xp: { value: xp },
             class: { value: className },
+            ancestry: { value: ancestry },
           },
           abilities,
         },

@@ -1,9 +1,25 @@
 import {
   asNumber,
   elementValue,
+  firstElementValue,
   primaryImage,
   toFoundryJournalDefault,
 } from "./common.js";
+
+// Roleplayr stores 5e character fields under numeric-suffixed keys
+// (`dnd5e-strength_401010`). Bare aliases (`dnd5e-strength`, `strength`) are
+// kept as fallbacks for older data and for the PDF path that uses unsuffixed
+// keys. Order is priority — first non-empty wins.
+const DND5E_ABILITY_KEYS = {
+  str: ["dnd5e-strength_401010", "dnd5e-strength", "strength", "str"],
+  dex: ["dnd5e-dexterity_401011", "dnd5e-dexterity", "dexterity", "dex"],
+  con: ["dnd5e-constitution_401012", "dnd5e-constitution", "constitution", "con"],
+  int: ["dnd5e-intelligence_401013", "dnd5e-intelligence", "intelligence", "int"],
+  wis: ["dnd5e-wisdom_401014", "dnd5e-wisdom", "wisdom", "wis"],
+  cha: ["dnd5e-charisma_401015", "dnd5e-charisma", "charisma", "cha"],
+};
+const DND5E_CLASS_KEYS = ["dnd5e-class_101598", "dnd5e-class", "class"];
+const DND5E_RACE_KEYS = ["dnd5e-race_101669", "dnd5e-race", "race", "species"];
 
 const MODULE_ID = "gmants-roleplayr-integration";
 
@@ -34,8 +50,11 @@ export const dnd5eAdapter = {
     const level = asNumber(elements.get("level")) ?? 1;
     const xp = asNumber(elements.get("xp")) ?? 0;
     const speed = asNumber(elements.get("speed")) ?? 25;
-    const className = elements.get("class") ?? "";
+    const className = firstElementValue(entity, DND5E_CLASS_KEYS) ?? "";
+    const race = firstElementValue(entity, DND5E_RACE_KEYS) ?? "";
 
+    // Fall back to a `stats` JSON blob for older data that packed all six
+    // scores into one element. New data comes in as individual elements.
     let statsJson = elements.get("stats");
     if (typeof statsJson === "string") {
       try {
@@ -46,7 +65,9 @@ export const dnd5eAdapter = {
     }
     const abilities = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
-      const value = asNumber(statsJson?.[key]) ?? 14;
+      const fromElement = asNumber(firstElementValue(entity, DND5E_ABILITY_KEYS[key]));
+      const fromStats = asNumber(statsJson?.[key]);
+      const value = fromElement ?? fromStats ?? 14;
       abilities[key] = { value };
     }
 
@@ -66,6 +87,7 @@ export const dnd5eAdapter = {
             level,
             xp: { value: xp },
             class: className,
+            race,
           },
           abilities,
         },
