@@ -58,6 +58,13 @@
     <ul class="gmants-roleplayr-entity-list">
       {{#each entities}}
         <li class="gmants-roleplayr-entity-row">
+          {{#if thumbnail_url}}
+            <img class="gmants-roleplayr-entity-avatar" src="{{thumbnail_url}}" alt="" loading="lazy" />
+          {{else}}
+            <div class="gmants-roleplayr-entity-avatar gmants-roleplayr-entity-avatar-placeholder" aria-hidden="true">
+              <i class="fas fa-user"></i>
+            </div>
+          {{/if}}
           <div class="gmants-roleplayr-entity-meta">
             <div class="gmants-roleplayr-entity-name">{{name}}</div>
             <div class="gmants-roleplayr-entity-sub">{{entity_type}}</div>

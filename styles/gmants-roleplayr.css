@@ -279,6 +279,25 @@ a.gmants-roleplayr-branding:hover {
   background: var(--gmants-roleplayr-bg-hover);
 }
 
+.gmants-roleplayr-entity-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex: 0 0 auto;
+  margin-right: 0.65rem;
+  border: 1px solid var(--gmants-roleplayr-border-light);
+  background: var(--gmants-roleplayr-bg-hover);
+}
+
+.gmants-roleplayr-entity-avatar-placeholder {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--gmants-roleplayr-border-light);
+  font-size: 1rem;
+}
+
 .gmants-roleplayr-entity-meta {
   min-width: 0;
   flex: 1;

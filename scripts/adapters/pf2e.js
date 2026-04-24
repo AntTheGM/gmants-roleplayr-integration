@@ -26,11 +26,12 @@ export const pf2eAdapter = {
     const elements = new Map(entity.elements.map((e) => [e.element_type_key, e.value]));
     const actorType = targetType ?? (entity.entity_type === "adversary" ? "npc" : "character");
 
-    const hpMax = asNumber(elements.get("hp_max")) ?? 8;
+    const hpMax = asNumber(elements.get("hp_max")) ?? 10;
     const hpCurrent = asNumber(elements.get("hp_current")) ?? hpMax;
-    const ac = asNumber(elements.get("ac")) ?? 10;
+    const ac = asNumber(elements.get("ac")) ?? 13;
     const level = asNumber(elements.get("level")) ?? 1;
     const xp = asNumber(elements.get("xp")) ?? 0;
+    const speed = asNumber(elements.get("speed")) ?? 25;
     const className = elements.get("class") ?? "";
 
     let statsJson = elements.get("stats");
@@ -41,12 +42,12 @@ export const pf2eAdapter = {
         statsJson = null;
       }
     }
+    // Roleplayr sends PF2e ability scores (10 = 0 mod, 12 = +1 mod).
+    // PF2e Foundry stores the modifier, not the score.
     const abilities = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
-      const value = statsJson?.[key];
-      if (typeof value === "number") {
-        abilities[key] = { mod: value };
-      }
+      const score = asNumber(statsJson?.[key]) ?? 12;
+      abilities[key] = { mod: Math.floor((score - 10) / 2) };
     }
 
     return {
@@ -59,6 +60,7 @@ export const pf2eAdapter = {
           attributes: {
             hp: { value: hpCurrent, max: hpMax },
             ac: { value: ac },
+            speed: { value: speed },
           },
           details: {
             level: { value: level },

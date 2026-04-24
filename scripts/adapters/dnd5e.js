@@ -30,9 +30,10 @@ export const dnd5eAdapter = {
 
     const hpMax = asNumber(elements.get("hp_max")) ?? 10;
     const hpCurrent = asNumber(elements.get("hp_current")) ?? hpMax;
-    const ac = asNumber(elements.get("ac")) ?? 10;
+    const ac = asNumber(elements.get("ac")) ?? 13;
     const level = asNumber(elements.get("level")) ?? 1;
     const xp = asNumber(elements.get("xp")) ?? 0;
+    const speed = asNumber(elements.get("speed")) ?? 25;
     const className = elements.get("class") ?? "";
 
     let statsJson = elements.get("stats");
@@ -45,10 +46,8 @@ export const dnd5eAdapter = {
     }
     const abilities = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
-      const value = statsJson?.[key];
-      if (typeof value === "number") {
-        abilities[key] = { value };
-      }
+      const value = asNumber(statsJson?.[key]) ?? 12;
+      abilities[key] = { value };
     }
 
     return {
@@ -61,6 +60,7 @@ export const dnd5eAdapter = {
           attributes: {
             hp: { value: hpCurrent, max: hpMax },
             ac: { value: ac },
+            movement: { walk: speed, units: "ft" },
           },
           details: {
             level,
