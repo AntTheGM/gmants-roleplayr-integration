@@ -46,7 +46,7 @@ export const dnd5eAdapter = {
     }
     const abilities = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
-      const value = asNumber(statsJson?.[key]) ?? 12;
+      const value = asNumber(statsJson?.[key]) ?? 14;
       abilities[key] = { value };
     }
 

@@ -46,7 +46,7 @@ export const pf2eAdapter = {
     // PF2e Foundry stores the modifier, not the score.
     const abilities = {};
     for (const key of ["str", "dex", "con", "int", "wis", "cha"]) {
-      const score = asNumber(statsJson?.[key]) ?? 12;
+      const score = asNumber(statsJson?.[key]) ?? 14;
       abilities[key] = { mod: Math.floor((score - 10) / 2) };
     }
 
