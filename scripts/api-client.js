@@ -101,6 +101,36 @@ export class RoleplayrApi {
     return body;
   }
 
+  /**
+   * Server-side search across the bound campaign's world.
+   *
+   * @param {{
+   *   q?: string,
+   *   type?: string,
+   *   sort?: "relevance" | "name_asc" | "name_desc" | "updated_at_asc" | "updated_at_desc",
+   *   cursor?: string,
+   *   limit?: number,
+   *   include_archived?: boolean,
+   * }} [opts]
+   * @returns {Promise<{
+   *   data: Array<{ id: string, entity_type: string, name: string, matched_on: "name"|"description"|"tag"|null, rank: number, is_favorite: boolean, updated_at: string|null, thumbnail_url: string|null, tags: Array<{key: string, name: string, color: string|null}> }>,
+   *   pagination: { next_cursor: string | null, has_more: boolean },
+   *   sort: string,
+   * }>}
+   */
+  async searchEntities(opts = {}) {
+    const query = new URLSearchParams();
+    if (opts.q) query.set("q", opts.q);
+    if (opts.type) query.set("type", opts.type);
+    if (opts.sort) query.set("sort", opts.sort);
+    if (opts.cursor) query.set("cursor", opts.cursor);
+    if (opts.limit) query.set("limit", String(opts.limit));
+    if (opts.include_archived) query.set("include_archived", "true");
+    const suffix = query.toString() ? `?${query}` : "";
+    const { body } = await this._fetch(`/entities/search${suffix}`);
+    return body;
+  }
+
   // --- Writes --------------------------------------------------------------
 
   /**
@@ -117,6 +147,53 @@ export class RoleplayrApi {
       body: JSON.stringify({ elements }),
     });
     return body;
+  }
+
+  /**
+   * List pending Roleplayr -> Foundry pushes for the bound campaign.
+   * Does not include the full entity payload — call `getEntity(id)` for each.
+   *
+   * @param {{ cursor?: string; limit?: number }} [opts]
+   */
+  async listFoundryPushes(opts = {}) {
+    const query = new URLSearchParams();
+    if (opts.cursor) query.set("cursor", opts.cursor);
+    if (opts.limit) query.set("limit", String(opts.limit));
+    const suffix = query.toString() ? `?${query}` : "";
+    const { body } = await this._fetch(`/foundry/pushes${suffix}`);
+    return body;
+  }
+
+  /**
+   * Acknowledge a pending push row with the outcome. The Idempotency-Key
+   * header is strongly recommended — if the network drops after the Foundry
+   * write succeeded, a retry with the same key returns the cached response.
+   *
+   * @param {string} id — push queue row id
+   * @param {{ status: "created" | "updated" | "skipped" | "failed",
+   *           foundry_document_type?: "Actor" | "Item" | "JournalEntry",
+   *           foundry_document_id?: string,
+   *           error?: string }} result
+   * @param {{ idempotencyKey?: string }} [opts]
+   */
+  async ackFoundryPush(id, result, { idempotencyKey } = {}) {
+    const headers = {};
+    if (idempotencyKey) headers["Idempotency-Key"] = idempotencyKey;
+    try {
+      const { body } = await this._fetch(`/foundry/pushes/${id}/ack`, {
+        method: "POST",
+        headers,
+        body: JSON.stringify(result),
+      });
+      return { ok: true, body };
+    } catch (err) {
+      // 409 ALREADY_CONSUMED — someone else (retry race) ACKed first. Treat as success.
+      if (err.status === 409 && err.code === "ALREADY_CONSUMED") {
+        logger.debug(`Push ${id} was already ACKed (409 ALREADY_CONSUMED)`);
+        return { ok: false, status: err.status, code: err.code, error: err };
+      }
+      throw err;
+    }
   }
 
   /**

@@ -1,0 +1,26 @@
+{
+  "_id": "rlplyrPullMacr01",
+  "_key": "!macros!rlplyrPullMacr01",
+  "name": "Pull from Roleplayr",
+  "type": "script",
+  "author": "SYixMRBTMbFoSMVo",
+  "scope": "global",
+  "img": "icons/magic/air/air-burst-spiral-pink.webp",
+  "folder": null,
+  "sort": 250,
+  "command": "const mod = game.modules.get('gmants-roleplayr-integration');\nif (!mod?.active) {\n  ui.notifications.error(\"GMAnt's Roleplayr Integration module is not active.\");\n} else {\n  game.gmantsRoleplayr?.pullPushes?.();\n}",
+  "ownership": {
+    "default": 0
+  },
+  "flags": {},
+  "_stats": {
+    "compendiumSource": null,
+    "duplicateSource": null,
+    "coreVersion": "13.351",
+    "systemId": null,
+    "systemVersion": null,
+    "createdTime": 1745366400000,
+    "modifiedTime": 1745366400000,
+    "lastModifiedBy": "SYixMRBTMbFoSMVo"
+  }
+}

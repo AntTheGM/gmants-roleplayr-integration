@@ -1,4 +1,11 @@
-import { asNumber, primaryImage } from "./common.js";
+import {
+  asNumber,
+  elementValue,
+  primaryImage,
+  toFoundryJournalDefault,
+} from "./common.js";
+
+const MODULE_ID = "gmants-roleplayr-integration";
 
 /**
  * Pathfinder 2e adapter. Pre-import only — PF2e actors are deeply nested,
@@ -15,7 +22,7 @@ import { asNumber, primaryImage } from "./common.js";
  * | stats.str / ...        | abilities.{str,dex,...}.mod       |
  */
 export const pf2eAdapter = {
-  toFoundry(entity, { targetType } = {}) {
+  toFoundryActor(entity, { targetType } = {}) {
     const elements = new Map(entity.elements.map((e) => [e.element_type_key, e.value]));
     const actorType = targetType ?? (entity.entity_type === "adversary" ? "npc" : "character");
 
@@ -71,6 +78,60 @@ export const pf2eAdapter = {
     };
   },
 
+  /**
+   * Item adapter — maps Roleplayr `item` entity_type_keys to pf2e Item.system.
+   * PF2e has per-denomination price fields and rarity lives inside traits.
+   * Supported foundry types: "weapon", "armor", "consumable", "equipment",
+   * "treasure" (default for generic loot).
+   */
+  toFoundryItem(entity) {
+    const itemType = String(elementValue(entity, "item_type") ?? "")
+      .toLowerCase()
+      .trim();
+    const foundryType = mapPf2eItemType(itemType);
+
+    const description = String(elementValue(entity, "description") ?? "");
+    const level = asNumber(elementValue(entity, "level")) ?? 0;
+    const priceGp = asNumber(elementValue(entity, "price")) ?? 0;
+    const rarity = String(
+      elementValue(entity, "rarity") ?? "common"
+    ).toLowerCase();
+    const bulk = elementValue(entity, "bulk") ?? "-";
+    const quantity = asNumber(elementValue(entity, "quantity")) ?? 1;
+
+    return {
+      documentType: "Item",
+      data: {
+        name: entity.name || "Unnamed Item",
+        type: foundryType,
+        img: primaryImage(entity) ?? undefined,
+        system: {
+          description: { value: description, gm: "" },
+          level: { value: level },
+          price: { value: { gp: priceGp } },
+          bulk: { value: bulk },
+          quantity,
+          traits: {
+            rarity,
+            value: [],
+            otherTags: [],
+          },
+        },
+        flags: {
+          [MODULE_ID]: {
+            roleplayr_id: entity.id,
+            roleplayr_type: entity.entity_type,
+            synced_at: new Date().toISOString(),
+          },
+        },
+      },
+    };
+  },
+
+  toFoundryJournal(entity) {
+    return toFoundryJournalDefault(entity);
+  },
+
   fromActor(actor) {
     const sys = actor.system ?? {};
     return {
@@ -80,3 +141,22 @@ export const pf2eAdapter = {
     };
   },
 };
+
+pf2eAdapter.toFoundry = pf2eAdapter.toFoundryActor;
+
+function mapPf2eItemType(itemType) {
+  if (!itemType) return "treasure";
+  if (itemType.includes("weapon")) return "weapon";
+  if (itemType.includes("armor") || itemType.includes("shield")) return "armor";
+  if (
+    itemType.includes("potion") ||
+    itemType.includes("scroll") ||
+    itemType.includes("consumable")
+  ) {
+    return "consumable";
+  }
+  if (itemType.includes("equipment") || itemType.includes("gear")) {
+    return "equipment";
+  }
+  return "treasure";
+}

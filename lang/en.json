@@ -21,6 +21,14 @@
       "CombatSync": {
         "Name": "Stream Combat State to Player Portal",
         "Hint": "When on, combat tracker, party HP, and current scene are pushed live to the Roleplayr Player Portal."
+      },
+      "PushSync": {
+        "Name": "Receive Pushes from Roleplayr",
+        "Hint": "When on, entities the DM pushes from the Roleplayr UI can be pulled into Foundry via the Pull from Roleplayr button or the game.gmantsRoleplayr.pullPushes() macro."
+      },
+      "PushBackgroundPoll": {
+        "Name": "Background Pull Every 5 Minutes",
+        "Hint": "Safety net that automatically pulls pending pushes in case the DM forgets. Turn off to rely entirely on the manual Pull button or hotbar macro."
       }
     },
     "Config": {
@@ -38,14 +46,20 @@
     "Import": {
       "Title": "Import from Roleplayr",
       "Loading": "Loading entities...",
-      "Empty": "No entities of this type in the bound campaign.",
+      "LoadingMore": "Loading more...",
+      "LoadMore": "Load more",
+      "Empty": "No entities match the current filter in the bound campaign.",
       "Refresh": "Refresh",
       "ImportButton": "Import",
       "ImportAs": "As:",
       "AsCharacter": "Player Character",
       "AsNPC": "NPC",
-      "MoreAvailable": "Showing the first 100. Add a search filter in a future update.",
+      "SearchPlaceholder": "Search by name, description, or tag...",
+      "SortBy": "Sort by",
       "Close": "Close"
+    },
+    "Push": {
+      "ReviewTitle": "Review Pushes from Roleplayr"
     }
   }
 }

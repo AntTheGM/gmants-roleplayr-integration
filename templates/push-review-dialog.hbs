@@ -1,0 +1,81 @@
+<div class="gmants-roleplayr-form gmants-roleplayr-push-review">
+
+  <header class="gmants-roleplayr-push-header">
+    <strong>{{totalCount}}</strong>
+    {{#if totalCount}}
+      pending {{#if (eq totalCount 1)}}push{{else}}pushes{{/if}} from Roleplayr
+      &mdash;
+      <span class="gmants-roleplayr-push-count-new">{{newCount}} new</span>
+      {{#if conflictCount}}
+        &middot;
+        <span class="gmants-roleplayr-push-count-conflict">{{conflictCount}} conflict{{#if (ne conflictCount 1)}}s{{/if}}</span>
+      {{/if}}
+    {{else}}
+      No pending pushes.
+    {{/if}}
+  </header>
+
+  {{#if totalCount}}
+    <ul class="gmants-roleplayr-push-list">
+      {{#each rows}}
+        <li class="gmants-roleplayr-push-row {{#if conflict}}is-conflict{{else}}is-new{{/if}}">
+          <div class="gmants-roleplayr-push-meta">
+            <div class="gmants-roleplayr-push-name">
+              {{name}}
+              {{#if missingEntity}}
+                <span class="gmants-roleplayr-push-badge warn">fetch failed</span>
+              {{/if}}
+            </div>
+            <div class="gmants-roleplayr-push-sub">
+              {{entityType}} &rarr; {{targetDocumentType}}
+              {{#if conflict}}
+                &middot; existing: <em>{{existingName}}</em>
+              {{/if}}
+            </div>
+          </div>
+
+          {{#if conflict}}
+            <select
+              data-push-resolution
+              data-push-id="{{pushId}}"
+              class="gmants-roleplayr-push-resolution"
+            >
+              <option value="update" {{#if isResolutionUpdate}}selected{{/if}}>Update existing</option>
+              <option value="create_new" {{#if isResolutionCreateNew}}selected{{/if}}>Create new copy</option>
+              <option value="skip" {{#if isResolutionSkip}}selected{{/if}}>Skip</option>
+            </select>
+          {{else}}
+            <select
+              data-push-resolution
+              data-push-id="{{pushId}}"
+              class="gmants-roleplayr-push-resolution"
+            >
+              <option value="create_new" {{#if isResolutionCreateNew}}selected{{/if}}>Create new</option>
+              <option value="skip" {{#if isResolutionSkip}}selected{{/if}}>Skip</option>
+            </select>
+          {{/if}}
+        </li>
+      {{/each}}
+    </ul>
+  {{/if}}
+
+  <footer class="gmants-roleplayr-footer">
+    <div class="gmants-roleplayr-footer-right">
+      <button type="button" data-action="close" {{#if applying}}disabled{{/if}}>Cancel</button>
+      <button
+        type="button"
+        class="gmants-roleplayr-primary-btn"
+        data-action="applyAll"
+        {{#if applying}}disabled{{/if}}
+        {{#unless totalCount}}disabled{{/unless}}
+      >
+        {{#if applying}}
+          <i class="fas fa-spinner fa-spin"></i> Applying&hellip;
+        {{else}}
+          <i class="fas fa-check"></i> Apply all
+        {{/if}}
+      </button>
+    </div>
+  </footer>
+
+</div>

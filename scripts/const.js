@@ -13,6 +13,8 @@ export const SETTINGS = Object.freeze({
   BINDING: "binding",
   ACTOR_SYNC_ENABLED: "actorSyncEnabled",
   COMBAT_SYNC_ENABLED: "combatSyncEnabled",
+  PUSH_SYNC_ENABLED: "pushSyncEnabled",
+  PUSH_BACKGROUND_POLL_ENABLED: "pushBackgroundPollEnabled",
 });
 
 /**
@@ -24,3 +26,10 @@ export const ACTOR_SYNC_DEBOUNCE_MS = 2000;
 
 /** Combat state pushes are rate-limited server-side to 1/sec per campaign. */
 export const COMBAT_SYNC_MIN_INTERVAL_MS = 1100;
+
+/**
+ * Background poll interval for the Roleplayr -> Foundry push queue. Primary
+ * trigger is GM-initiated (macro or sidebar button); this timer is a safety
+ * net for GMs who forget. 5 minutes keeps server traffic negligible.
+ */
+export const PUSH_POLL_INTERVAL_MS = 5 * 60 * 1000;

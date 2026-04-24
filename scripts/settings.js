@@ -58,6 +58,24 @@ export function registerSettings() {
     type: Boolean,
     default: true,
   });
+
+  game.settings.register(MODULE_ID, SETTINGS.PUSH_SYNC_ENABLED, {
+    name: "GMANTS_ROLEPLAYR.Settings.PushSync.Name",
+    hint: "GMANTS_ROLEPLAYR.Settings.PushSync.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
+
+  game.settings.register(MODULE_ID, SETTINGS.PUSH_BACKGROUND_POLL_ENABLED, {
+    name: "GMANTS_ROLEPLAYR.Settings.PushBackgroundPoll.Name",
+    hint: "GMANTS_ROLEPLAYR.Settings.PushBackgroundPoll.Hint",
+    scope: "world",
+    config: true,
+    type: Boolean,
+    default: true,
+  });
 }
 
 /** Settings-page promo note — matches the VTTools module guidelines pattern. */

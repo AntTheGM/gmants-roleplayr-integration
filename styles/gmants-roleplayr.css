@@ -153,6 +153,69 @@ a.gmants-roleplayr-branding:hover {
 
 /* --- Import dialog ----------------------------------------------------- */
 
+.gmants-roleplayr-search-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  padding: 0.5rem;
+  border-radius: 4px;
+  background: var(--gmants-roleplayr-bg-subtle);
+  border: 1px solid var(--gmants-roleplayr-border-light);
+}
+
+.gmants-roleplayr-search-input {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  flex: 1;
+  padding: 0.35rem 0.5rem;
+  background: var(--gmants-roleplayr-bg-faint);
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+}
+
+.gmants-roleplayr-search-input i {
+  opacity: 0.55;
+  font-size: 0.8rem;
+}
+
+.gmants-roleplayr-search-input input {
+  flex: 1;
+  background: transparent;
+  border: none;
+  outline: none;
+  font-size: 0.85rem;
+}
+
+.gmants-roleplayr-sort-select {
+  font-size: 0.8rem;
+  padding: 0.3rem 0.4rem;
+  background: var(--gmants-roleplayr-bg-faint);
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.gmants-roleplayr-load-more {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0;
+}
+
+.gmants-roleplayr-load-more button {
+  font-size: 0.8rem;
+  padding: 0.4rem 1rem;
+  background: transparent;
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.gmants-roleplayr-load-more button:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
 .gmants-roleplayr-type-bar {
   display: flex;
   gap: 0.25rem;
@@ -174,9 +237,11 @@ a.gmants-roleplayr-branding:hover {
 }
 
 .gmants-roleplayr-type-btn.active {
-  background: var(--gmants-roleplayr-bg-selected);
+  background: rgba(184, 134, 11, 0.18);
+  color: var(--gmants-roleplayr-gold-light);
   font-weight: bold;
   border-color: var(--gmants-roleplayr-gold);
+  box-shadow: 0 0 4px rgba(218, 165, 32, 0.25);
 }
 
 .gmants-roleplayr-refresh-btn {
@@ -248,12 +313,28 @@ a.gmants-roleplayr-branding:hover {
   font-size: 0.65rem;
 }
 
-.gmants-roleplayr-target-type select {
-  font-size: 0.75rem;
-  padding: 0.15rem 0.25rem;
+.gmants-roleplayr select {
+  color: inherit;
   background: var(--gmants-roleplayr-bg-inset);
   border: 1px solid var(--gmants-roleplayr-border);
   border-radius: 3px;
+  padding: 0.15rem 0.25rem;
+  color-scheme: dark light;
+}
+
+.gmants-roleplayr select:focus {
+  border-color: var(--gmants-roleplayr-gold);
+  outline: none;
+  box-shadow: 0 0 4px rgba(218, 165, 32, 0.3);
+}
+
+.gmants-roleplayr select option {
+  color: inherit;
+  background: #1c1c1c;
+}
+
+.gmants-roleplayr-target-type select {
+  font-size: 0.75rem;
   min-width: 7rem;
 }
 
@@ -273,4 +354,87 @@ a.gmants-roleplayr-branding:hover {
 
 .gmants-roleplayr-integration-import-btn:hover {
   background: var(--gmants-roleplayr-bg-hover);
+}
+
+/* Push review dialog */
+
+.gmants-roleplayr-integration-pull-btn {
+  display: block;
+  width: 100%;
+  padding: 0.5rem;
+  margin: 0.5rem 0;
+  font-weight: bold;
+  background: var(--gmants-roleplayr-bg-subtle);
+  border: 1px solid var(--gmants-roleplayr-border);
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.gmants-roleplayr-integration-pull-btn:hover {
+  background: var(--gmants-roleplayr-bg-hover);
+}
+
+.gmants-roleplayr-push-review .gmants-roleplayr-push-header {
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--gmants-roleplayr-border);
+  font-size: 0.9rem;
+}
+
+.gmants-roleplayr-push-count-new {
+  color: #62c76e;
+}
+
+.gmants-roleplayr-push-count-conflict {
+  color: goldenrod;
+}
+
+.gmants-roleplayr-push-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 440px;
+  overflow-y: auto;
+}
+
+.gmants-roleplayr-push-row {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.5rem 0.75rem;
+  border-bottom: 1px solid var(--gmants-roleplayr-border);
+}
+
+.gmants-roleplayr-push-row.is-conflict {
+  background: rgba(218, 165, 32, 0.07);
+}
+
+.gmants-roleplayr-push-meta {
+  flex: 1;
+  min-width: 0;
+}
+
+.gmants-roleplayr-push-name {
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.gmants-roleplayr-push-sub {
+  font-size: 0.75rem;
+  opacity: 0.7;
+}
+
+.gmants-roleplayr-push-resolution {
+  min-width: 8rem;
+}
+
+.gmants-roleplayr-push-badge.warn {
+  display: inline-block;
+  margin-left: 0.5rem;
+  padding: 0 0.35rem;
+  font-size: 0.7rem;
+  color: goldenrod;
+  border: 1px solid goldenrod;
+  border-radius: 3px;
 }

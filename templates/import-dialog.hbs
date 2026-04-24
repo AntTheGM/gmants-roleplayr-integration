@@ -1,5 +1,33 @@
 <div class="gmants-roleplayr-form gmants-roleplayr-import-form">
 
+  <div class="gmants-roleplayr-search-bar">
+    <label class="gmants-roleplayr-search-input">
+      <i class="fas fa-search" aria-hidden="true"></i>
+      <input
+        type="text"
+        name="searchQuery"
+        placeholder="{{localize "GMANTS_ROLEPLAYR.Import.SearchPlaceholder"}}"
+        value="{{query}}"
+        autocomplete="off"
+      />
+    </label>
+    <select name="sortMode" class="gmants-roleplayr-sort-select" aria-label="{{localize "GMANTS_ROLEPLAYR.Import.SortBy"}}">
+      {{#each sortOptions}}
+        <option value="{{key}}" {{#if selected}}selected{{/if}} {{#if disabled}}disabled{{/if}}>
+          {{label}}
+        </option>
+      {{/each}}
+    </select>
+    <button
+      type="button"
+      class="gmants-roleplayr-refresh-btn"
+      data-action="refresh"
+      title="{{localize "GMANTS_ROLEPLAYR.Import.Refresh"}}"
+    >
+      <i class="fas fa-sync"></i>
+    </button>
+  </div>
+
   <div class="gmants-roleplayr-type-bar">
     {{#each types}}
       <button
@@ -11,14 +39,6 @@
         {{label}}
       </button>
     {{/each}}
-    <button
-      type="button"
-      class="gmants-roleplayr-refresh-btn"
-      data-action="refresh"
-      title="{{localize "GMANTS_ROLEPLAYR.Import.Refresh"}}"
-    >
-      <i class="fas fa-sync"></i>
-    </button>
   </div>
 
   {{#if loadError}}
@@ -66,9 +86,16 @@
       {{/each}}
     </ul>
     {{#if hasMore}}
-      <p class="gmants-roleplayr-hint">
-        {{localize "GMANTS_ROLEPLAYR.Import.MoreAvailable"}}
-      </p>
+      <div class="gmants-roleplayr-load-more">
+        <button type="button" data-action="loadMore" {{#if isLoadingMore}}disabled{{/if}}>
+          {{#if isLoadingMore}}
+            <i class="fas fa-spinner fa-spin"></i>
+            {{localize "GMANTS_ROLEPLAYR.Import.LoadingMore"}}
+          {{else}}
+            {{localize "GMANTS_ROLEPLAYR.Import.LoadMore"}}
+          {{/if}}
+        </button>
+      </div>
     {{/if}}
   {{/if}}
 

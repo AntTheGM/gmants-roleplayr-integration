@@ -1,4 +1,11 @@
-import { asNumber, primaryImage } from "./common.js";
+import {
+  asNumber,
+  elementValue,
+  primaryImage,
+  toFoundryJournalDefault,
+} from "./common.js";
+
+const MODULE_ID = "gmants-roleplayr-integration";
 
 /**
  * D&D 5e adapter. Mapping table (Roleplayr element_type_key → dnd5e path):
@@ -17,7 +24,7 @@ import { asNumber, primaryImage } from "./common.js";
  * wider surface because it's one-shot.
  */
 export const dnd5eAdapter = {
-  toFoundry(entity, { targetType } = {}) {
+  toFoundryActor(entity, { targetType } = {}) {
     const elements = new Map(entity.elements.map((e) => [e.element_type_key, e.value]));
     const actorType = targetType ?? (entity.entity_type === "adversary" ? "npc" : "character");
 
@@ -73,6 +80,56 @@ export const dnd5eAdapter = {
     };
   },
 
+  /**
+   * Item adapter — maps Roleplayr `item` entity_type_keys to dnd5e Item.system.
+   * Supported `item_type` values map to Foundry Item `type`:
+   *   weapon -> "weapon"
+   *   armor / shield -> "equipment"
+   *   consumable / potion / scroll -> "consumable"
+   *   anything else -> "loot"
+   */
+  toFoundryItem(entity) {
+    const itemType = String(elementValue(entity, "item_type") ?? "")
+      .toLowerCase()
+      .trim();
+    const foundryType = mapDnd5eItemType(itemType);
+
+    const description = String(elementValue(entity, "description") ?? "");
+    const weight = asNumber(elementValue(entity, "weight")) ?? 0;
+    const price = asNumber(elementValue(entity, "price")) ?? 0;
+    const rarity = String(
+      elementValue(entity, "rarity") ?? "common"
+    ).toLowerCase();
+    const quantity = asNumber(elementValue(entity, "quantity")) ?? 1;
+
+    return {
+      documentType: "Item",
+      data: {
+        name: entity.name || "Unnamed Item",
+        type: foundryType,
+        img: primaryImage(entity) ?? undefined,
+        system: {
+          description: { value: description, chat: "" },
+          weight: { value: weight, units: "lb" },
+          price: { value: price, denomination: "gp" },
+          rarity,
+          quantity,
+        },
+        flags: {
+          [MODULE_ID]: {
+            roleplayr_id: entity.id,
+            roleplayr_type: entity.entity_type,
+            synced_at: new Date().toISOString(),
+          },
+        },
+      },
+    };
+  },
+
+  toFoundryJournal(entity) {
+    return toFoundryJournalDefault(entity);
+  },
+
   fromActor(actor) {
     const sys = actor.system ?? {};
     return {
@@ -82,3 +139,27 @@ export const dnd5eAdapter = {
     };
   },
 };
+
+// Backwards-compatible alias so existing ImportDialog code that calls
+// `adapter.toFoundry(entity)` keeps working during the transition.
+dnd5eAdapter.toFoundry = dnd5eAdapter.toFoundryActor;
+
+function mapDnd5eItemType(itemType) {
+  if (!itemType) return "loot";
+  if (itemType.includes("weapon")) return "weapon";
+  if (
+    itemType.includes("armor") ||
+    itemType.includes("shield") ||
+    itemType.includes("equipment")
+  ) {
+    return "equipment";
+  }
+  if (
+    itemType.includes("potion") ||
+    itemType.includes("scroll") ||
+    itemType.includes("consumable")
+  ) {
+    return "consumable";
+  }
+  return "loot";
+}
