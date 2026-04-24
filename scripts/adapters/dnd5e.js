@@ -71,6 +71,23 @@ export const dnd5eAdapter = {
       abilities[key] = { value };
     }
 
+    // D&D 5e v3+ derives PC level from class items rather than details.level.
+    // Attach a minimal class item so the sheet shows the expected level.
+    // NPCs use details.level directly, so no item is needed.
+    const items = [];
+    if (actorType === "character") {
+      const classLabel = className || "Adventurer";
+      items.push({
+        name: classLabel,
+        type: "class",
+        system: {
+          levels: level,
+          identifier: classLabel.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+          hitDice: "d8",
+        },
+      });
+    }
+
     return {
       documentType: "Actor",
       data: {
@@ -91,6 +108,7 @@ export const dnd5eAdapter = {
           },
           abilities,
         },
+        items,
         flags: {
           "gmants-roleplayr-integration": {
             roleplayr_id: entity.id,
