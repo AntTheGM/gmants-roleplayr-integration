@@ -1,5 +1,6 @@
 import { dnd5eAdapter } from "./dnd5e.js";
 import { pf2eAdapter } from "./pf2e.js";
+import { virtualepicAdapter } from "./virtualepic.js";
 
 /**
  * Select the adapter matching the active Foundry system. Falls back to the
@@ -12,6 +13,8 @@ export function adapterForSystem(systemId) {
       return dnd5eAdapter;
     case "pf2e":
       return pf2eAdapter;
+    case "virtualepic":
+      return virtualepicAdapter;
     default:
       return dnd5eAdapter;
   }
