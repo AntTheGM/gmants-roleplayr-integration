@@ -27,11 +27,17 @@
               {{/if}}
             </div>
             <div class="gmants-roleplayr-push-sub">
-              {{entityType}} &rarr; {{targetDocumentType}}
+              {{entityType}}{{#if veType}} <span class="gmants-roleplayr-push-vetype">{{veType}}</span>{{/if}}
+              &rarr; {{targetDocumentType}}{{#if foundryItemSubtype}} <em>({{foundryItemSubtype}})</em>{{/if}}
               {{#if conflict}}
                 &middot; existing: <em>{{existingName}}</em>
               {{/if}}
             </div>
+            {{#if veTypeElementKey}}
+              <div class="gmants-roleplayr-push-element">
+                via <code>{{veTypeElementKey}}</code> = <code>{{veType}}</code>
+              </div>
+            {{/if}}
           </div>
 
           {{#if conflict}}

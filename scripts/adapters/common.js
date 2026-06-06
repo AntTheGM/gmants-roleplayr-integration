@@ -22,6 +22,10 @@
  * @typedef {object} FoundryImportSpec
  * @property {"Actor" | "Item" | "JournalEntry"} documentType
  * @property {object} data — passed directly to `Actor.create(data)` etc.
+ * @property {object=} update — optional follow-up payload applied via
+ *   `created.update(spec.update)`. Used by adapters whose system has no
+ *   DataModel (e.g. PF2e characters) and needs Foundry's create-time
+ *   template.json defaults to land before fields like HP/AC are overwritten.
  *
  * @typedef {object} SyncableFields
  * @property {number=} hp_current

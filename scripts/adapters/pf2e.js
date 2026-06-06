@@ -67,32 +67,72 @@ export const pf2eAdapter = {
       abilities[key] = { mod: Math.floor((score - 10) / 2) };
     }
 
+    // PF2e characters compute hp.max from ancestryHP + classHP*level + con*level
+    // and clamp hp.value down to that. Without a Class item, classHP=0 and the
+    // imported HP is impossible to express. Stub a class item with a plausible
+    // hpPerLevel so the imported hp_max round-trips. Class is a system-registered
+    // DataModel (CONFIG.Item.dataModels.class), so partial system data is
+    // schema-defaulted at create time. `hp` field is clamped to [4, 12] by the
+    // schema; if the user later replaces this with a real PF2e class item they
+    // delete this stub first.
+    const items = [];
+    if (actorType === "character") {
+      const hpPerLevel = Math.max(4, Math.min(12, Math.round(hpMax / Math.max(level, 1) - abilities.con.mod)));
+      items.push({
+        name: className || "Imported Class",
+        type: "class",
+        system: {
+          hp: hpPerLevel,
+          keyAbility: { value: ["str"], selected: "str" },
+        },
+        flags: {
+          "gmants-roleplayr-integration": { stub: true },
+        },
+      });
+    }
+
+    // PF2e characters have no registered DataModel (unlike npcs/loot/party), so
+    // a one-shot `Actor.create({type:"character", system:{...partial...}})`
+    // skips the template.json defaults the system relies on — `prepareBaseData`
+    // then crashes accessing fields like `_source.system.skills`, leaving
+    // `actor.inventory` unset and breaking sheet render. The reliable shape is
+    // the two-step pattern Foundry's "Create Actor" button uses: create with
+    // bare {name, type}, let defaults fill in, then update with our overlay.
     return {
       documentType: "Actor",
       data: {
         name: entity.name || "Unnamed",
         type: actorType,
         img: primaryImage(entity) ?? undefined,
-        system: {
-          attributes: {
-            hp: { value: hpCurrent, max: hpMax },
-            ac: { value: ac },
-            speed: { value: speed },
-          },
-          details: {
-            level: { value: level },
-            xp: { value: xp },
-            class: { value: className },
-            ancestry: { value: ancestry },
-          },
-          abilities,
-        },
+        items,
         flags: {
           "gmants-roleplayr-integration": {
             roleplayr_id: entity.id,
             roleplayr_type: entity.entity_type,
             synced_at: new Date().toISOString(),
+            // PF2e's prepareBaseData nulls system.details.{class,ancestry} —
+            // the real values come from embedded Class/Ancestry items. Stash
+            // the Roleplayr strings here for reference / future auto-linking.
+            imported_class: className,
+            imported_ancestry: ancestry,
           },
+        },
+      },
+      update: {
+        system: {
+          attributes: {
+            hp: { value: hpCurrent, max: hpMax },
+            ac: { value: ac },
+            // `otherSpeeds` must be an array — CreaturePF2e.prepareBaseData
+            // spreads it at pf2e.mjs:38224, and a missing/undefined value
+            // halts prep before build/saves/proficiencies/investiture are set.
+            speed: { value: speed, otherSpeeds: [] },
+          },
+          details: {
+            level: { value: level },
+            xp: { value: xp },
+          },
+          abilities,
         },
       },
     };

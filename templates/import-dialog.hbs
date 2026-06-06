@@ -72,12 +72,9 @@
           <label class="gmants-roleplayr-target-type">
             <span class="gmants-roleplayr-target-type-label">{{localize "GMANTS_ROLEPLAYR.Import.ImportAs"}}</span>
             <select name="targetType">
-              <option value="character" {{#if isDefaultCharacter}}selected{{/if}}>
-                {{localize "GMANTS_ROLEPLAYR.Import.AsCharacter"}}
-              </option>
-              <option value="npc" {{#if isDefaultNpc}}selected{{/if}}>
-                {{localize "GMANTS_ROLEPLAYR.Import.AsNPC"}}
-              </option>
+              {{#each targetOptions}}
+                <option value="{{value}}" {{#if selected}}selected{{/if}}>{{label}}</option>
+              {{/each}}
             </select>
           </label>
           <button

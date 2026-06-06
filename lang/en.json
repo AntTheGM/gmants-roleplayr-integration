@@ -54,6 +54,8 @@
       "ImportAs": "As:",
       "AsCharacter": "Player Character",
       "AsNPC": "NPC",
+      "AsItem": "Item",
+      "AsJournal": "Journal Entry",
       "SearchPlaceholder": "Search by name, description, or tag...",
       "SortBy": "Sort by",
       "Close": "Close"

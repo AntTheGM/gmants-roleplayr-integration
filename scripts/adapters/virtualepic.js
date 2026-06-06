@@ -12,13 +12,17 @@ const MODULE_ID = "gmants-roleplayr-integration";
  *
  * VE rides Roleplayr's existing `item` entity_type (id 5), scoped to the
  * `virtualepic` game_system, with a `virtualepic_ve_type` discriminator that
- * routes each pushed entity to the right Foundry Item type. For the first
- * integration slice the only ve_type is "achievement" — its element schema is
- * registered by Roleplayr migration `20260601000000_add_virtualepic_achievement_fields.sql`
- * (keys prefixed `virtualepic_*`, two nested blocks stored as JSON).
- *
- * Foundry-side delivery target: the `achievement` Item DataModel
- * (`module/data/item/achievement.mjs`) + `applyAchievementReward` on grant.
+ * routes each pushed entity to the right Foundry Item type. ve_types wired:
+ *   - "achievement" → `achievement` Item. Schema:
+ *       `20260601000000_add_virtualepic_achievement_fields.sql` (keys
+ *       prefixed `virtualepic_*`, two nested blocks stored as JSON).
+ *       Foundry target: `module/data/item/achievement.mjs` +
+ *       `applyAchievementReward` on grant.
+ *   - "class" → `class` Item (full class-definition bundle). Schema:
+ *       `20260602000000_add_virtualepic_class_fields.sql` (keys prefixed
+ *       `virtualepic_class_*`, nested bundle blocks stored as JSON).
+ *       Foundry target: `module/data/item/class.mjs`; the bundle is applied
+ *       to a crawler later, on SELECTION, via `applyClassBundle()`.
  */
 
 // ── value coercers (Roleplayr stores every element value as text) ───────────
@@ -30,15 +34,17 @@ function veBool(entity, key) {
   const v = elementValue(entity, key);
   return v === true || String(v).toLowerCase() === "true";
 }
-function veJson(entity, key) {
+function veJson(entity, key, dflt = {}) {
   const raw = elementValue(entity, key);
-  if (raw === null || raw === undefined || raw === "") return {};
+  if (raw === null || raw === undefined || raw === "") return dflt;
   if (typeof raw === "object") return raw;
   try {
     return JSON.parse(raw);
   } catch {
-    console.warn(`[virtualepic adapter] element "${key}" is not valid JSON; defaulting to {}`);
-    return {};
+    console.warn(
+      `[virtualepic adapter] element "${key}" is not valid JSON; defaulting to ${JSON.stringify(dflt)}`
+    );
+    return dflt;
   }
 }
 
@@ -91,6 +97,66 @@ function toAchievementItem(entity) {
           roleplayr_id: entity.id,
           roleplayr_type: entity.entity_type,
           ve_type: "achievement",
+          synced_at: new Date().toISOString(),
+        },
+      },
+    },
+  };
+}
+
+/**
+ * ve_type "class" → Foundry `class` Item (the full class-definition bundle).
+ * Maps the 19 `virtualepic_class_*` element keys onto ClassData.system,
+ * JSON.parsing the nested bundle blocks back into objects/arrays. Same pattern
+ * as the achievement adapter; the heavy lifting (embedding skills/spells,
+ * stat/immunity carrier, auto-achievements) happens later, when the crawler
+ * SELECTS the option via `applyClassBundle()` — the adapter only materializes
+ * the reviewable bundle Item. `applied` is left to the DataModel default (false).
+ *
+ * Contract: Roleplayr migration `20260602000000_add_virtualepic_class_fields.sql`.
+ * Foundry target: `module/data/item/class.mjs` (ClassData).
+ */
+function toClassItem(entity) {
+  return {
+    documentType: "Item",
+    data: {
+      name: entity.name || "Unnamed Class",
+      type: "class",
+      img: primaryImage(entity) ?? undefined,
+      system: {
+        // ── Overview ──────────────────────────────────────────────────────
+        tier: veStr(entity, "virtualepic_class_tier", "base").toLowerCase(),
+        acquisitionFloor:
+          asNumber(elementValue(entity, "virtualepic_class_acquisition_floor")) ?? 3,
+        parentOnly: veBool(entity, "virtualepic_class_parent_only"),
+        // JSON array of parent-class names; [] for base classes.
+        parentClass: veJson(entity, "virtualepic_class_parent_class", []),
+        // ── Lore ──────────────────────────────────────────────────────────
+        description: veStr(entity, "virtualepic_class_description"),
+        canonSource: veStr(entity, "virtualepic_class_canon_source"),
+        // ── Mechanics — LIVE grant bundle ─────────────────────────────────
+        grantedSkills: veJson(entity, "virtualepic_class_granted_skills", []),
+        grantedSpells: veJson(entity, "virtualepic_class_granted_spells", []),
+        statBonuses: veJson(entity, "virtualepic_class_stat_bonuses", []),
+        immunities: veJson(entity, "virtualepic_class_immunities", []),
+        autoAchievements: veJson(entity, "virtualepic_class_auto_achievements", []),
+        extraPerks: veJson(entity, "virtualepic_class_extra_perks", []),
+        acquisitionRequirements: veJson(entity, "virtualepic_class_acquisition_requirements", {}),
+        // ── Mechanics — store-only at MVP ─────────────────────────────────
+        trainingCapRaises: veJson(entity, "virtualepic_class_training_cap_raises", []),
+        xpRateModifiers: veJson(entity, "virtualepic_class_xp_rate_modifiers", []),
+        // manaPool is nullable on the DataModel — preserve null when absent.
+        manaPool: veJson(entity, "virtualepic_class_mana_pool", null),
+        factionMemberships: veJson(entity, "virtualepic_class_faction_memberships", []),
+        // ── Specialization/endorsement gates (stored, out of MVP scope) ────
+        specializationTrack: veJson(entity, "virtualepic_class_specialization_track", {}),
+        endorsementOptions: veJson(entity, "virtualepic_class_endorsement_options", {}),
+      },
+      flags: {
+        [MODULE_ID]: {
+          roleplayr_id: entity.id,
+          roleplayr_type: entity.entity_type,
+          ve_type: "class",
           synced_at: new Date().toISOString(),
         },
       },
@@ -161,6 +227,8 @@ export const virtualepicAdapter = {
     switch (veType) {
       case "achievement":
         return toAchievementItem(entity);
+      case "class":
+        return toClassItem(entity);
       default:
         return toGenericItem(entity, veType);
     }

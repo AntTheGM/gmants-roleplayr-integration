@@ -1,5 +1,6 @@
 import { MODULE_ID } from "../const.js";
 import { currentAdapter } from "../adapters/index.js";
+import { elementValue } from "../adapters/common.js";
 import { logger } from "../util/logger.js";
 
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
@@ -74,11 +75,31 @@ export class PushReviewDialog extends HandlebarsApplicationMixin(
         this.resolutionByPushId.get(row.id) ??
         (conflict ? "update" : "create_new");
 
+      // VE entities ride the `item` entity type; their human name lives in a
+      // `name` element while top-level `entity.name`/`display_name` is a
+      // denormalized mirror that can be empty. Fall back through both.
+      const name =
+        stringOrNull(entity?.name) ??
+        (entity ? stringOrNull(elementValue(entity, "name")) : null) ??
+        stringOrNull(entity?.display_name) ??
+        "(unknown)";
+
+      // VE discriminator: the `virtualepic_ve_type` element routes the push to
+      // a specific Foundry Item subtype (achievement/class/…). Null for
+      // non-VE systems, where there's nothing extra to surface.
+      const veType = entity
+        ? stringOrNull(elementValue(entity, "virtualepic_ve_type"))
+        : null;
+      const foundryItemSubtype = veType ? veItemSubtype(veType) : null;
+
       return {
         pushId: row.id,
         entityId: row.entity_id,
         entityType: row.entity_type,
-        name: entity?.name ?? "(unknown)",
+        name,
+        veType,
+        veTypeElementKey: veType ? "virtualepic_ve_type" : null,
+        foundryItemSubtype,
         targetDocumentType,
         conflict,
         existingName: existing?.name ?? null,
@@ -295,6 +316,31 @@ export class PushReviewDialog extends HandlebarsApplicationMixin(
 }
 
 // ---- Helpers -------------------------------------------------------------
+
+/** Trim to a non-empty string, or null. Treats undefined/blank as absent. */
+function stringOrNull(value) {
+  if (value === null || value === undefined) return null;
+  const s = String(value).trim();
+  return s ? s : null;
+}
+
+/**
+ * Foundry Item subtype the virtualepic adapter will materialize for a given
+ * ve_type. Mirrors `adapters/virtualepic.js#toFoundryItem` — keep in sync.
+ * Unknown/absent ve_types fall back to a generic `gear` Item there.
+ */
+function veItemSubtype(veType) {
+  switch (String(veType ?? "").toLowerCase().trim()) {
+    case "achievement":
+      return "achievement";
+    case "class":
+      return "class";
+    case "":
+      return null;
+    default:
+      return "gear";
+  }
+}
 
 function targetDocumentFor(entityType) {
   switch (entityType) {

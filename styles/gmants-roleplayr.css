@@ -444,6 +444,26 @@ a.gmants-roleplayr-branding:hover {
   opacity: 0.7;
 }
 
+.gmants-roleplayr-push-vetype {
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  opacity: 0.95;
+}
+
+.gmants-roleplayr-push-element {
+  margin-top: 0.1rem;
+  font-size: 0.7rem;
+  opacity: 0.55;
+}
+
+.gmants-roleplayr-push-element code {
+  padding: 0 0.2rem;
+  font-size: 0.95em;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 3px;
+}
+
 .gmants-roleplayr-push-resolution {
   min-width: 8rem;
 }

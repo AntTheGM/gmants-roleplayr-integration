@@ -5,6 +5,42 @@ import { logger } from "../util/logger.js";
 const { ApplicationV2, HandlebarsApplicationMixin } = foundry.applications.api;
 
 /**
+ * Which Foundry document kind a Roleplayr entity_type imports to. Items become
+ * Items, locations/events become JournalEntries, everything else (character /
+ * adversary) becomes an Actor. Drives both the "As:" dropdown options and which
+ * adapter method we call.
+ */
+function importKindFor(entityType) {
+  switch (entityType) {
+    case "item":
+      return "item";
+    case "location":
+    case "event":
+      return "journal";
+    default:
+      return "actor";
+  }
+}
+
+/** Build the "As:" target-type options for a given entity_type. */
+function targetOptionsFor(entityType) {
+  const L = (k) => game.i18n.localize(`GMANTS_ROLEPLAYR.Import.${k}`);
+  switch (importKindFor(entityType)) {
+    case "item":
+      return [{ value: "item", label: L("AsItem"), selected: true }];
+    case "journal":
+      return [{ value: "journal", label: L("AsJournal"), selected: true }];
+    default: {
+      const isNpc = entityType === "adversary";
+      return [
+        { value: "character", label: L("AsCharacter"), selected: !isNpc },
+        { value: "npc", label: L("AsNPC"), selected: isNpc },
+      ];
+    }
+  }
+}
+
+/**
  * "Import from Roleplayr" dialog. Server-side search via the public
  * /api/v1/entities/search endpoint — alpha-sort by default, relevance
  * when the GM types a query, keyset-cursor pagination via "Load more".
@@ -66,16 +102,11 @@ export class ImportDialog extends HandlebarsApplicationMixin(ApplicationV2) {
         { key: "event", label: "Events" },
       ].map((t) => ({ ...t, active: t.key === this.selectedType })),
       sortOptions,
-      entities: this.entities.map((e) => {
-        const defaultTargetType = e.entity_type === "adversary" ? "npc" : "character";
-        return {
-          ...e,
-          name: e.name || "(unnamed)",
-          defaultTargetType,
-          isDefaultCharacter: defaultTargetType === "character",
-          isDefaultNpc: defaultTargetType === "npc",
-        };
-      }),
+      entities: this.entities.map((e) => ({
+        ...e,
+        name: e.name || "(unnamed)",
+        targetOptions: targetOptionsFor(e.entity_type),
+      })),
       isLoading: this.isLoading,
       isLoadingMore: this.isLoadingMore,
       hasMore: this.hasMore,
@@ -211,9 +242,21 @@ export class ImportDialog extends HandlebarsApplicationMixin(ApplicationV2) {
 
     try {
       const entity = await api.getEntity(entityId);
-      const spec = currentAdapter().toFoundry(entity, { targetType });
+      const adapter = currentAdapter();
+      // Route to the adapter method that matches the entity's kind — items
+      // become Items, locations/events become JournalEntries, the rest Actors.
+      const kind = importKindFor(entity.entity_type);
+      let spec;
+      if (kind === "item") {
+        spec = adapter.toFoundryItem(entity, { targetType });
+      } else if (kind === "journal") {
+        spec = adapter.toFoundryJournal(entity, { targetType });
+      } else {
+        spec = adapter.toFoundryActor(entity, { targetType });
+      }
       const documentClass = CONFIG[spec.documentType]?.documentClass ?? Actor;
       const created = await documentClass.create(spec.data);
+      if (created && spec.update) await created.update(spec.update);
       ui.notifications.info(`Imported "${entity.name}" to ${spec.documentType}.`);
       logger.info("Imported entity", {
         roleplayr_id: entity.id,
